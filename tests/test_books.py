@@ -36,6 +36,51 @@ def test_list_books():
     assert len(client.get("/books").json()) == 2
 
 
+def _seed_books():
+    client.post("/books", json=BOOK)
+    client.post("/books", json={"title": "Dune Messiah", "author": "Frank Herbert", "year": 1969})
+    client.post("/books", json={"title": "Emma", "author": "Jane Austen", "year": 1815})
+    client.post("/books", json={"title": "Untitled", "author": "Anonymous"})
+
+
+def _titles(response):
+    return [b["title"] for b in response.json()]
+
+
+def test_filter_by_title():
+    _seed_books()
+    response = client.get("/books", params={"title": "dune"})
+    assert response.status_code == 200
+    assert _titles(response) == ["Dune", "Dune Messiah"]
+
+
+def test_filter_by_author():
+    _seed_books()
+    assert _titles(client.get("/books", params={"author": "AUSTEN"})) == ["Emma"]
+
+
+def test_filter_by_year():
+    _seed_books()
+    assert _titles(client.get("/books", params={"year": 1969})) == ["Dune Messiah"]
+
+
+def test_combined_filters():
+    _seed_books()
+    response = client.get("/books", params={"title": "dune", "year": 1965})
+    assert _titles(response) == ["Dune"]
+    assert client.get("/books", params={"title": "emma", "author": "herbert"}).json() == []
+
+
+def test_filter_without_matches():
+    _seed_books()
+    assert client.get("/books", params={"title": "zzz"}).json() == []
+
+
+def test_filter_invalid_params():
+    assert client.get("/books", params={"year": "abc"}).status_code == 422
+    assert client.get("/books", params={"title": ""}).status_code == 422
+
+
 def test_update_book():
     book_id = client.post("/books", json=BOOK).json()["id"]
     response = client.put(f"/books/{book_id}", json={**BOOK, "year": 1966})

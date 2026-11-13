@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, HTTPException, Query, Response, status
 
 from app.schemas import Book, BookCreate
 from app.storage import storage
@@ -7,8 +7,16 @@ router = APIRouter(prefix="/books", tags=["books"])
 
 
 @router.get("", response_model=list[Book])
-def list_books():
-    return storage.list()
+def list_books(
+    title: str | None = Query(
+        None, min_length=1, description="Filtra por título (subcadena, sin distinguir mayúsculas)"
+    ),
+    author: str | None = Query(
+        None, min_length=1, description="Filtra por autor (subcadena, sin distinguir mayúsculas)"
+    ),
+    year: int | None = Query(None, description="Filtra por año de publicación exacto"),
+):
+    return storage.list(title=title, author=author, year=year)
 
 
 @router.post("", response_model=Book, status_code=status.HTTP_201_CREATED)
