@@ -7,7 +7,7 @@ Lista de mejoras candidatas para ir implementándolas poco a poco (un ticket de 
 | # | Mejora | Tipo | Qué ejercita |
 |---|--------|------|--------------|
 | 1 | Paginación en `GET /books` (`limit`, `offset`) | Story | Cambio de contrato de un endpoint existente |
-| 2 | Filtros y búsqueda por título/autor/año | Story | Nuevos query params |
+| 2 | ~~Filtros y búsqueda por título/autor/año~~ **(Implementada)** | Story | Nuevos query params |
 | 3 | Ordenación (`sort_by`, `order`) | Story | Query params, combinación con filtros |
 | 4 | Campo `isbn` único con validación de formato | Story | Cambio de modelo, nuevo error 409 |
 | 5 | Campo `genre` / categorías de libros | Story | Cambio de modelo, migración |

@@ -6,8 +6,20 @@ class BookStorage:
         self._books: dict[int, Book] = {}
         self._next_id = 1
 
-    def list(self) -> list[Book]:
-        return list(self._books.values())
+    def list(
+        self,
+        title: str | None = None,
+        author: str | None = None,
+        year: int | None = None,
+    ) -> list[Book]:
+        books = self._books.values()
+        if title is not None:
+            books = [b for b in books if title.casefold() in b.title.casefold()]
+        if author is not None:
+            books = [b for b in books if author.casefold() in b.author.casefold()]
+        if year is not None:
+            books = [b for b in books if b.year == year]
+        return list(books)
 
     def get(self, book_id: int) -> Book | None:
         return self._books.get(book_id)

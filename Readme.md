@@ -35,7 +35,7 @@ La API queda disponible en `http://127.0.0.1:8000`.
 | Método | Ruta | Descripción |
 |--------|------|-------------|
 | GET | `/health` | Estado del servicio |
-| GET | `/books` | Listar libros |
+| GET | `/books` | Listar libros (admite filtros `title`, `author` y `year`) |
 | POST | `/books` | Crear un libro |
 | GET | `/books/{id}` | Obtener un libro |
 | PUT | `/books/{id}` | Reemplazar un libro |
@@ -52,6 +52,10 @@ curl -X POST http://127.0.0.1:8000/books \
 # Listar libros
 curl http://127.0.0.1:8000/books
 
+# Filtrar libros (los filtros se combinan con AND)
+curl "http://127.0.0.1:8000/books?title=dune"
+curl "http://127.0.0.1:8000/books?author=herbert&year=1965"
+
 # Obtener el libro 1
 curl http://127.0.0.1:8000/books/1
 
@@ -65,6 +69,16 @@ curl -X DELETE http://127.0.0.1:8000/books/1
 ```
 
 Los campos `title` y `author` son obligatorios y no pueden estar vacíos; `year` es opcional.
+
+Filtros de `GET /books` (todos opcionales y combinables):
+
+| Query param | Tipo | Comportamiento |
+|-------------|------|----------------|
+| `title` | string (no vacío) | Contiene el texto, sin distinguir mayúsculas |
+| `author` | string (no vacío) | Contiene el texto, sin distinguir mayúsculas |
+| `year` | entero | Coincidencia exacta |
+
+Sin coincidencias devuelve `200` con una lista vacía; un valor inválido (p. ej. `year=abc` o `title=`) devuelve `422`.
 
 ## 4. Ejecutar los tests
 
